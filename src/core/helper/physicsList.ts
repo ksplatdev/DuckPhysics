@@ -1,5 +1,5 @@
 import Engine from '../engine';
-import RigidBody from './rigidBody';
+import RigidBody from '../models/rigidBody';
 
 export default class PhysicsList {
   protected engine: Engine;

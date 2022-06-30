@@ -391,6 +391,14 @@ export default class Vector2 {
     return this.x * this.x + this.y * this.y;
   }
 
+  public unit() {
+    if (this.magnitude() === 0) {
+      return Vector2.ZERO;
+    } else {
+      return new Vector2(this.x / this.magnitude(), this.y / this.magnitude());
+    }
+  }
+
   /**
    * @memberof Vector2
    * @description Scales the Vector2 by the magnitude or length

@@ -17,13 +17,21 @@ export namespace PhysicsTypes {
   }
 
   export namespace Core {
-    export interface HitboxTest {
-      body: RigidBody;
-      subjectBody: RigidBody;
-      hitbox: Hitbox;
-      subjectHitbox: Hitbox;
-      hitboxIntersectingVertices: Vector2[];
-      subjectHitboxIntersectingVertices: Vector2[];
+    export namespace Hitbox {
+      export type Shape = 'circle' | 'capsule' | 'polygon' | 'rect';
+
+      export interface Test {
+        body: RigidBody;
+        subjectBody: RigidBody;
+        hitbox: Hitbox;
+        subjectHitbox: Hitbox;
+        hitboxIntersectingVertices: Vector2[];
+        subjectHitboxIntersectingVertices: Vector2[];
+      }
+    }
+
+    export namespace RigidBody {
+      export type Shape = 'circle' | 'rect' | 'polygon';
     }
   }
 }

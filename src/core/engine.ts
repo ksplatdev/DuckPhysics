@@ -1,6 +1,6 @@
 import Logger from './misc/logger';
 import RigidBody from './models/rigidBody';
-import PhysicsList from './models/physicsList';
+import PhysicsList from './helper/physicsList';
 
 export default class Engine {
   public bodies: PhysicsList;
