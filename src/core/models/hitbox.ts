@@ -1,5 +1,7 @@
 import { PhysicsTypes } from '../..';
 import Engine from '../engine';
+import degToRadians from '../math/functions/degToRadians';
+import Transform from '../math/transform';
 import Vector2 from '../math/vector2';
 import RigidBody from './rigidBody';
 
@@ -12,8 +14,13 @@ export default class Hitbox {
   public position: Vector2;
   public readonly positionBodyOffset: Vector2;
 
+  public rotation: number;
+  public readonly rotationBodyOffset: number;
+
   public vertices: Vector2[];
-  public edges: Vector2[];
+  protected transformedVertices: Vector2[] | null;
+
+  public transformUpdateRequired: boolean;
 
   public w: number;
   public h: number;
@@ -24,6 +31,7 @@ export default class Hitbox {
     shape: 'rect',
     body: RigidBody,
     positionBodyOffset: Vector2,
+    rotationBodyOffset: number,
     vertices: Vector2[],
     w: number,
     h: number,
@@ -35,6 +43,7 @@ export default class Hitbox {
     shape: 'capsule',
     body: RigidBody,
     positionBodyOffset: Vector2,
+    rotationBodyOffset: number,
     vertices: Vector2[],
     w: number,
     h: number,
@@ -46,6 +55,7 @@ export default class Hitbox {
     shape: 'circle',
     body: RigidBody,
     positionBodyOffset: Vector2,
+    rotationBodyOffset: number,
     vertices: Vector2[],
     w: number,
     h: number,
@@ -57,6 +67,7 @@ export default class Hitbox {
     shape: 'polygon',
     body: RigidBody,
     positionBodyOffset: Vector2,
+    rotationBodyOffset: number,
     vertices: Vector2[],
     w?: number,
     h?: number,
@@ -68,6 +79,7 @@ export default class Hitbox {
     shape: PhysicsTypes.Core.Hitbox.Shape,
     body: RigidBody,
     positionBodyOffset: Vector2,
+    rotationBodyOffset: number,
     vertices: Vector2[],
     w?: number,
     h?: number,
@@ -81,39 +93,43 @@ export default class Hitbox {
     this.position = this.body.position;
     this.positionBodyOffset = positionBodyOffset;
 
+    this.rotation = this.body.rotation;
+    this.rotationBodyOffset = rotationBodyOffset;
+
     this.vertices = vertices;
-    this.edges = [];
+    this.transformedVertices = [];
+
+    this.transformUpdateRequired = true;
 
     this.w = w || 0;
     this.h = h || 0;
     this.r = r || 0;
 
-    // build edges
-
-    if (this.vertices.length < 3) {
-      this.engine.logger.error('There must be more than 2 vertices');
+    // set transformedVertices
+    if (this.shape === 'rect' || this.shape === 'polygon') {
+      this.transformedVertices = [];
+    } else {
+      this.transformedVertices = null;
     }
-    for (let i = 0; i < this.vertices.length; i++) {
-      const a = this.vertices[i];
-      let b = this.vertices[0];
-      if (i + 1 < this.vertices.length) {
-        b = this.vertices[i + 1];
-      }
-      this.edges.push(new Vector2(b.x - a.x, b.y - a.y));
-    }
-
-    // calc position
-    this.position.add(this.positionBodyOffset);
   }
 
   public async _update() {
     // update position
     this.position = this.body.position;
     this.position.add(this.positionBodyOffset);
+
+    // update rotation
+    this.rotation = this.body.rotation + this.rotationBodyOffset;
   }
 
   public correct(amount: Vector2) {
     this.body.position.add(amount);
+    this.transformUpdateRequired = true;
+  }
+
+  public rotate(degrees: number) {
+    this.rotation += degToRadians(degrees);
+    this.transformUpdateRequired = true;
   }
 
   public async collideAgainst(hitboxes: Hitbox[]) {
@@ -121,6 +137,10 @@ export default class Hitbox {
 
     // test collisions first
     for await (const subjectHitbox of hitboxes) {
+      // prevent hitboxes from colliding with own other hitboxes
+      if (this.body.hitboxes.includes(subjectHitbox)) {
+        continue;
+      }
       if (this.shape === 'circle' && subjectHitbox.shape === 'circle') {
         const collision = await this.testCircleCircle(subjectHitbox);
         if (collision) {
@@ -174,5 +194,18 @@ export default class Hitbox {
       );
       return false;
     }
+  }
+
+  public getTransformedVertices() {
+    if (this.transformUpdateRequired && this.transformedVertices) {
+      const transform = new Transform(this.position, this.rotation);
+
+      for (let i = 0; i < this.vertices.length; i++) {
+        const v = this.vertices[i];
+        this.transformedVertices[i] = Vector2.transformVector(v, transform);
+      }
+    }
+
+    return this.transformedVertices;
   }
 }
