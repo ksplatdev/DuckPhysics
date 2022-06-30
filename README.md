@@ -14,13 +14,27 @@ A 2D advanced SAT Physics Engine for the web.
 ## Features
 
 - SAT Collision Detection & Resolution
+  - Fast & Performant
 - Advanced Hitbox System
   - Multiple Hitboxes per RigidBody
-  - Concave & Convex
-- Fast & Asynchronous Loop
-- Consistent Collisions
+  - Different Shapes
+    - Rectangles
+    - Capsules
+    - Circles
+    - Concave & Convex Polygons
 - RigidBodies
-- Different Polygons
+  - Mass, Density, Restitution
+  - Different Shapes
+    - Polygons
+    - Rectangles
+    - Circles
+- Physics World
+  - Gravity
+  - Atmosphere
+  - Physics Layers
+  - Debugging
+- Standalone // No dependencies
+- Fast & Asynchronous Loop
 - Flexible
 - Made fully in TypeScript
 - Out of box Typedefs
