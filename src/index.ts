@@ -1,5 +1,8 @@
+import CollisionManager from './core/base/collisionManager';
 import Engine from './core/engine';
+import PhysicsList from './core/helper/physicsList';
 import Vector2 from './core/math/vector2';
+import Logger from './core/misc/logger';
 import Hitbox from './core/models/hitbox';
 import RigidBody from './core/models/rigidBody';
 
@@ -41,9 +44,19 @@ const DuckPhysics = {
   Core: {
     Models: {
       RigidBody,
+      Hitbox,
     },
     Math: {
       Vector2,
+    },
+    Helper: {
+      PhysicsList,
+    },
+    Base: {
+      CollisionManager,
+    },
+    Misc: {
+      Logger,
     },
   },
 };
