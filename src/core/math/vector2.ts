@@ -1,6 +1,7 @@
 import { PhysicsTypes } from '../..';
-import degToRadians from './degToRadians';
-import clamp from './clamp';
+import degToRadians from './functions/degToRadians';
+import clamp from './functions/clamp';
+import Transform from './transform';
 
 /**
  * @class Vector2
@@ -716,5 +717,18 @@ export default class Vector2 {
    */
   public static fromVec(vector: Vector2): Vector2 {
     return new Vector2(vector.x, vector.y);
+  }
+
+  public static distanceBetween(a: Vector2, b: Vector2) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  public static transformVector(vector: Vector2, transform: Transform) {
+    return new Vector2(
+      transform.cos * vector.x - transform.sin * vector.y + transform.x,
+      transform.sin * vector.x + transform.cos * vector.y + transform.y
+    );
   }
 }

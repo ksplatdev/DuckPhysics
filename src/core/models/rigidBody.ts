@@ -1,8 +1,8 @@
 import { PhysicsTypes } from '../..';
 import uniqueID from '../../utils/uniqueID';
 import Engine from '../engine';
-import calcPolygonArea from '../math/calcPolygonArea';
-import clamp from '../math/clamp';
+import calcPolygonArea from '../math/functions/calcPolygonArea';
+import clamp from '../math/functions/clamp';
 import Vector2 from '../math/vector2';
 import Hitbox from './hitbox';
 
@@ -135,8 +135,16 @@ export default class RigidBody {
   }
 
   public async _update(dt: number) {
+    if (this.isStatic) {
+      return;
+    }
+
+    // position
     this.position.x += this.linearVelocity.x * dt;
     this.position.y += this.linearVelocity.y * dt;
+
+    // rotation
+    this.rotation += this.angularVelocity * dt;
 
     // clamp to bounds
     this.position.x = clamp(this.position.x, this.bounds.x, this.bounds.w);
@@ -145,6 +153,7 @@ export default class RigidBody {
 
   public addHitbox(
     shape: PhysicsTypes.Core.Hitbox.Shape,
+    positionBodyOffset?: Vector2,
     hitboxVertices?: Vector2[],
     w?: number,
     h?: number,
@@ -155,6 +164,7 @@ export default class RigidBody {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       shape as any,
       this,
+      positionBodyOffset || Vector2.ZERO,
       hitboxVertices || this.vertices,
       w,
       h,

@@ -20,6 +20,11 @@ export default class Engine {
       // positional logic
       await body._update(dt);
 
+      // hitbox updates
+      for await (const hitbox of body.hitboxes) {
+        await hitbox._update();
+      }
+
       // collision detection
 
       // collision resolution

@@ -22,14 +22,11 @@ export namespace PhysicsTypes {
   export namespace Core {
     export namespace Hitbox {
       export type Shape = 'circle' | 'capsule' | 'polygon' | 'rect';
-
-      export interface Test {
-        body: RigidBody;
-        subjectBody: RigidBody;
+      export interface Collision {
         hitbox: Hitbox;
         subjectHitbox: Hitbox;
-        hitboxIntersectingVertices: Vector2[];
-        subjectHitboxIntersectingVertices: Vector2[];
+        normal: Vector2;
+        depth: number;
       }
     }
 
